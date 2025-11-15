@@ -74,6 +74,7 @@ async def check_postgresql_health(database_url: str) -> dict:
     try:
         from sqlalchemy import create_engine, text
         from sqlalchemy.pool import NullPool
+        from datetime import datetime
 
         start_time = datetime.utcnow()
 

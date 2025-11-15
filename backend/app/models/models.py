@@ -7,3 +7,5 @@ class ChatMessage(BaseModel):
 class DashboardResponse(BaseModel):
     message: str
     html: Optional[str] = None
+    from_cache: bool = False
+

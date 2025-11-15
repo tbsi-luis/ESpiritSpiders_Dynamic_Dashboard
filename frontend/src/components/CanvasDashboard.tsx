@@ -76,9 +76,7 @@ const CanvasDashboard: React.FC<CanvasDashboardProps> = ({ dashboardData }) => {
                 </div>
               </div>
             ) : (
-              <div className='bg-white p-4 rounded-lg border border-gray-200'>
                 <div ref={htmlContainerRef} className='w-full' />
-              </div>
             )}
         </main>
     </div>

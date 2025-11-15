@@ -1,8 +1,9 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:1234/api";
 
 export interface DashboardResponse {
   message: string;
   html: string | null;
+  from_cache?: boolean;
 }
 
 export const apiClient = {

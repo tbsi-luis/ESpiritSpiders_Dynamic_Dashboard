@@ -64,3 +64,40 @@ Example for a table:
 </table>
 
 Only return valid JSON with the HTML as plain text string, no other text."""
+
+CONTENT_GENERATION_WITH_FORMAT_REFERENCE = """You are a dynamic content generator. Based on the user's request, generate content with consistent formatting.
+
+User request: {user_message}
+
+IMPORTANT: A similar previous request was made and generated content in a specific format. Use this format as your TEMPLATE REFERENCE to maintain consistent UI/UX presentation.
+
+FORMAT REFERENCE (use this structure as inspiration, but generate NEW content for the current request):
+- Format Type: {format_type}
+- Previous Structure: {format_reference}
+
+Generate NEW content following the same formatting approach but with DIFFERENT DATA for this specific request.
+
+Return a JSON object with this structure:
+{{
+  "type": "form|dashboard|chart|table|report|custom",
+  "title": "Content Title",
+  "description": "Brief description",
+  "html": "<complete HTML markup here with inline styles>"
+}}
+
+IMPORTANT REQUIREMENTS:
+1. Generate ONLY plain HTML - no React components, no JSX, no framework-specific syntax
+2. Use INLINE STYLES ONLY - do NOT use Tailwind CSS classes or any CSS classes
+3. Write all styles directly in the style attribute of each element
+4. Make sure the HTML is self-contained and works standalone
+5. Use semantic HTML5 elements (div, section, article, header, footer, canvas, etc.)
+6. For styling, use CSS properties like: color, backgroundColor, padding, margin, fontSize, border, borderRadius, display, flexDirection, gap, etc.
+7. If you need charts/visualizations, use Chart.js (it's already loaded in the app - just use it with canvas elements)
+8. If you need tables, use HTML table elements with inline styling
+9. For interactivity, use vanilla JavaScript only with CDN-available libraries
+10. Make the output visually appealing with proper spacing and colors
+11. Ensure proper nesting and valid HTML structure
+12. Include <canvas> elements for charts with corresponding <script> to render with Chart.js
+13. CONSISTENCY: Follow the format reference's structure and styling approach for UI consistency
+
+Only return valid JSON with the HTML as plain text string, no other text."""
