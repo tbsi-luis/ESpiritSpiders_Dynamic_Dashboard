@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+openai
+pandas
+numpy
+cors
+pydantic
+pydantic_settings
+
+SQLAlchemy>=2.0.40
+psycopg2-binary>=2.9.11
+langchain
+langsmith
+langchain-openai
