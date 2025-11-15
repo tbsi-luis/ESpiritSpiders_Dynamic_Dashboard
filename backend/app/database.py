@@ -6,7 +6,7 @@ from typing import Generator
 from datetime import datetime
 import logging
 
-from config import get_settings
+from .config import get_settings
 
 settings = get_settings()
 
@@ -21,14 +21,12 @@ try:
         max_overflow=settings.DB_MAX_OVERFLOW,
         pool_timeout=settings.DB_POOL_TIMEOUT,
         pool_recycle=settings.DB_POOL_RECYCLE,
-        pool_pre_ping=True,  # Verify connections before using
-        # echo=settings.DEBUG,  # Log SQL statements in debug mode
+        pool_pre_ping=True, 
     )
     logger.info(f"Database engine created with URL: {settings.DATABASE_URL}")
 except ImportError as e:
     logger.error(f"Failed to create database engine: {e}")
     raise
-
 
 # Create session factory
 SessionLocal = sessionmaker(
@@ -64,10 +62,8 @@ def close_db() -> None:
 async def check_postgresql_health(database_url: str) -> dict:
     """
     Check PostgreSQL health using SQLAlchemy.
-
     Args:
         database_url: PostgreSQL connection URL
-
     Returns:
         dict with status, latency, and message
     """
