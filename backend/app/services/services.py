@@ -38,7 +38,7 @@ def analyze_user_intent(user_message: str, format_reference: Optional[dict] = No
     
     # Try to get real data via MCP if the request seems to involve data retrieval
     database_context = None
-    if any(keyword in user_message.lower() for keyword in ["show", "get", "retrieve", "fetch", "list", "display", "find", "query", "search", "active", "data", "database", "user", "table"]):
+    if any(keyword in user_message.lower() for keyword in ["show", "get", "retrieve", "fetch", "list", "display", "find", "query", "search", "active", "data", "database", "user", "table", "reliever"]):
         logger.info("  📊 Request appears to involve data retrieval - querying database via MCP")
         try:
             db_result = query_database_for_content(user_message)
@@ -52,9 +52,9 @@ def analyze_user_intent(user_message: str, format_reference: Optional[dict] = No
     
     # Build the prompt with database context if available
     if database_context:
-        base_prompt = CONTENT_GENERATION_PROMPT + f"\n\n📊 REAL DATABASE DATA AVAILABLE:\n{str(database_context)[:2000]}"
+        db_context_str = "\n\n📊 REAL DATABASE DATA AVAILABLE:\n" + str(database_context)[:2000]
     else:
-        base_prompt = CONTENT_GENERATION_PROMPT
+        db_context_str = ""
     
     # Choose prompt based on whether we have a format reference
     if format_reference:
@@ -64,7 +64,7 @@ def analyze_user_intent(user_message: str, format_reference: Optional[dict] = No
                 user_message=user_message,
                 format_type=format_reference.get('format_type', 'unknown'),
                 format_reference=format_reference.get('html_preview', 'N/A')[:500]
-            ) + f"\n\n📊 REAL DATABASE DATA:\n{str(database_context)[:2000]}"
+            ) + db_context_str
         else:
             prompt = CONTENT_GENERATION_WITH_FORMAT_REFERENCE.format(
                 user_message=user_message,
@@ -72,7 +72,7 @@ def analyze_user_intent(user_message: str, format_reference: Optional[dict] = No
                 format_reference=format_reference.get('html_preview', 'N/A')[:500]
             )
     else:
-        prompt = base_prompt.format(user_message=user_message)
+        prompt = CONTENT_GENERATION_PROMPT.format(user_message=user_message) + db_context_str
 
     try:
         response = openai_client.invoke(prompt)

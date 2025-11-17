@@ -16,69 +16,20 @@ Your task:
 2. Use any provided database data to populate your content
 3. Generate appropriate HTML content
 
-Analyze the request and return a JSON object with this structure:
-{{
-  "type": "form|dashboard|chart|table|report|custom",
-  "title": "Content Title",
-  "description": "Brief description",
-  "html": "<complete HTML markup here with inline styles>"
-}}
+Analyze the request and return ONLY a JSON object with this structure (replace with actual values):
+{{"type": "dashboard", "title": "Title", "description": "Description", "html": "<html>content</html>"}}
 
 IMPORTANT REQUIREMENTS:
-1. Generate ONLY plain HTML - no React components, no JSX, no framework-specific syntax
-2. Use INLINE STYLES ONLY - do NOT use Tailwind CSS classes or any CSS classes
-3. Write all styles directly in the style attribute of each element
-4. Make sure the HTML is self-contained and works standalone
-5. Use semantic HTML5 elements (div, section, article, header, footer, canvas, etc.)
-6. For styling, use CSS properties like: color, backgroundColor, padding, margin, fontSize, border, borderRadius, display, flexDirection, gap, etc.
-7. If you need charts/visualizations, use Chart.js (it's already loaded in the app - just use it with canvas elements)
-8. If you need tables, use HTML table elements with inline styling
-9. For interactivity, use vanilla JavaScript only with CDN-available libraries
-10. Make the output visually appealing with proper spacing and colors
-11. Ensure proper nesting and valid HTML structure
-12. Include <canvas> elements for charts with corresponding <script> to render with Chart.js
-13. When database data is provided, use REAL VALUES in tables and charts instead of placeholder data
-14. Format numbers, dates, and text appropriately for display
+1. Generate ONLY plain HTML - no React, no JSX
+2. Use INLINE STYLES ONLY - no CSS classes
+3. Valid HTML structure with inline CSS styling
+4. For tables: Use HTML table elements with inline styling
+5. For charts: Use Chart.js with canvas elements
+6. Use real database values when available
+7. Return ONLY valid JSON, nothing else
 
-Example for a table with database data:
-<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">
-  <thead style="background-color: #4CAF50; color: white;">
-    <tr>
-      <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">User Name</th>
-      <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Email</th>
-      <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr style="background-color: #f9f9f9;">
-      <td style="padding: 12px; border: 1px solid #ddd;">John Doe</td>
-      <td style="padding: 12px; border: 1px solid #ddd;">john@example.com</td>
-      <td style="padding: 12px; border: 1px solid #ddd; color: green;">Active</td>
-    </tr>
-  </tbody>
-</table>
-
-Example for a chart with real data:
-<div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0;">
-  <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 16px;">User Statistics</h2>
-  <canvas id="userChart" width="400" height="300"></canvas>
-</div>
-<script>
-  var ctx = document.getElementById('userChart').getContext('2d');
-  var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Active Users', 'Inactive Users'],
-      datasets: [{
-        label: 'Count',
-        data: [42, 15],
-        backgroundColor: ['#36A2EB', '#FF6384']
-      }]
-    }
-  });
-</script>
-
-Only return valid JSON with the HTML as plain text string, no other text."""
+Example JSON output format (replace values):
+{{"type": "table", "title": "Data Table", "description": "Shows data from database", "html": "<table style='...'>data</table>"}}"""
 
 CONTENT_GENERATION_WITH_FORMAT_REFERENCE = """You are a dynamic content generator with access to real database data via MCP (Model Context Protocol).
 

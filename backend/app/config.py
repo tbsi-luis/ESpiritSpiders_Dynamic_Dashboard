@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     DATABASE_PORT: int = 5432
     DATABASE_NAME: str = "Espider_10282025"
     DATABASE_USER: str = "people_navee"
-    DATABASE_PASSWORD: str = "admin@Adm!n"
+    DATABASE_PASSWORD: str = "admin"
 
     @property
     def DATABASE_URL(self) -> str:
@@ -24,6 +24,15 @@ class Settings(BaseSettings):
         encoded_password = quote_plus(self.DATABASE_PASSWORD)
 
         return f"postgresql://{self.DATABASE_USER}:{encoded_password}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
+
+    @property
+    def POSTGRESQL_URL(self) -> str:
+        encoded_password = quote_plus(self.DATABASE_PASSWORD)
+        
+        # return f"postgresql://people_navee:{encoded_password}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
+        
+        return f"postgresql://people_navee:admin@192.168.2.131:5432/Espider_10282025"
+
 
     # Database Pool Settings
     DB_POOL_SIZE: int = 10

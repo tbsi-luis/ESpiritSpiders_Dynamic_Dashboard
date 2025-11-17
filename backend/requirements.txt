@@ -14,5 +14,7 @@ psycopg2-binary>=2.9.11
 langchain
 langsmith
 langchain-openai
+sqlite3
 
 mcp-server-postgres
+langchain-mcp-adapters
