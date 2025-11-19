@@ -8,7 +8,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-3.5-turbo"
+    OPENAI_MODEL: str = "gpt-5"
     OPENAI_TEMPERATURE: float = 0.7
 
     DATABASE_HOST: str = "192.168.2.131"

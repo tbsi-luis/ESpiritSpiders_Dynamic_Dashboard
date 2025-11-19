@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import type { DashboardResponse } from '../services/apiClient'
-import { CanvasDashboard, ChatbotBoard } from '../components'
+import { CanvasDashboard, ChatbotBoard, Sidebar } from '../components'
 
 const DynamicDashboard: React.FC = () => {
   const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null)
@@ -10,9 +10,10 @@ const DynamicDashboard: React.FC = () => {
   }
 
   return (
-    <div className='w-full h-screen flex flex-row items-end p-10 gap-15'>
-      <CanvasDashboard dashboardData={dashboardData} />
+    <div className='w-full h-screen flex flex-row'>
+      <Sidebar />
       <ChatbotBoard onDashboardGenerated={handleDashboardGenerated} />
+      <CanvasDashboard dashboardData={dashboardData} />
     </div>
   )
 }

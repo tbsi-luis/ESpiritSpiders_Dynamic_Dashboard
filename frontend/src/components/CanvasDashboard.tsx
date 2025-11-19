@@ -62,24 +62,27 @@ const CanvasDashboard: React.FC<CanvasDashboardProps> = ({ dashboardData }) => {
   }, [dashboardData?.html]);
 
   return (
-    <div className='h-full w-full flex flex-col border border-gray-300 rounded-lg'>
-        <header className='w-full h-fit p-4 bg-white shadow-md flex flex-row items-center justify-between'>
-            <p className='font-semibold text-xl'>Navee Board</p>
-            <button className='bg-emerald-500 rounded-md px-3 py-2 font-semibold text-white'>Download</button>
-        </header>
-        <main className='w-full h-full overflow-y-auto flex flex-col gap-6 p-6'>
-            {!dashboardData?.html ? (
-              <div className='w-full h-full flex items-center justify-center'>
-                <div className='w-fit h-fit flex flex-col items-center'>
-                    <RiRobot2Line className='w-20 h-20 text-gray-400 mb-4'/>
-                    <p className='text-gray-500'>Ask NaveeBot anything you want...</p>
+      <main className='w-full h-full overflow-y-auto flex flex-col gap-6 p-6'>
+          {!dashboardData?.html ? (
+            <div className='w-full h-full flex items-center justify-center'>
+              <div className="flex flex-col items-center justify-center gap-3">
+                  <RiRobot2Line className="w-20 h-20 text-indigo-400 animate-pulse" />
+
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></span>
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce delay-150"></span>
+                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce delay-300"></span>
+                  </div>
+
+                  <p className="text-gray-500 font-medium">
+                    NaveeBot is turning ideas into charts…
+                  </p>
                 </div>
-              </div>
-            ) : (
-                <div ref={htmlContainerRef} className='w-full' />
-            )}
-        </main>
-    </div>
+            </div>
+          ) : (
+              <div ref={htmlContainerRef} className='w-full' />
+          )}
+      </main>
   )
 }
 
