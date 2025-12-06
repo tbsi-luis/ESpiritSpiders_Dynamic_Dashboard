@@ -62,7 +62,7 @@ const CanvasDashboard: React.FC<CanvasDashboardProps> = ({ dashboardData }) => {
   }, [dashboardData?.html]);
 
   return (
-      <main className='w-full h-full overflow-y-auto flex flex-col gap-6 p-6'>
+      <main className='w-full h-full overflow-hidden flex flex-col'>
           {!dashboardData?.html ? (
             <div className='w-full h-full flex items-center justify-center'>
               <div className="flex flex-col items-center justify-center gap-3">
@@ -80,7 +80,7 @@ const CanvasDashboard: React.FC<CanvasDashboardProps> = ({ dashboardData }) => {
                 </div>
             </div>
           ) : (
-              <div ref={htmlContainerRef} className='w-full' />
+              <div ref={htmlContainerRef} className='w-full flex-1 overflow-y-auto overflow-x-hidden p-6' />
           )}
       </main>
   )

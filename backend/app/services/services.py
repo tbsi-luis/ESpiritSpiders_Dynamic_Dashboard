@@ -1,8 +1,6 @@
 import json
 import logging
 from langchain_openai import ChatOpenAI
-from langchain_mcp_adapters.client import MultiServerMCPClient
-from langgraph.prebuilt import create_react_agent
 from typing import Optional, Tuple, List
 from ..config import get_settings
 from ..prompts import CONTENT_GENERATION_PROMPT, CONTENT_GENERATION_WITH_FORMAT_REFERENCE
@@ -13,6 +11,7 @@ from ..memory import (
     add_ai_message,
     get_chat_history
 )
+from ..database_handler import get_real_database_context
 import asyncio
 import sys
 import os
@@ -33,34 +32,6 @@ def validate_mcp_connection():
         logger.error(f"Error validating MCP connection: {e}")
         return False
 
-# Refactored make_graph function to use the new MCP adapter
-async def make_graph():
-    NODE_PATH = "C:\\nvm4w\\nodejs\\node.exe"
-    SERVER_JS = "C:\\Users\\bandivas_l\\AppData\\Roaming\\npm\\node_modules\\@modelcontextprotocol\\server-postgres\\dist\\index.js"
-
-    # Initialize MCP client with server details
-    client = MultiServerMCPClient({
-        "postgres": {
-            "command": NODE_PATH,
-            "transport": "stdio",
-            "args": [SERVER_JS, settings.DATABASE_URL],
-        }
-    })
-
-    # Get tools via the MCP client
-    tools = await client.get_tools()
-
-    # Initialize the OpenAI model (GPT-4)
-    llm = ChatOpenAI(model="gpt-5", temperature=0)
-
-    # Create the agent that can interact with both OpenAI and the MCP tools
-    agent = create_react_agent(
-        model=llm,
-        tools=tools
-    )
-
-    return agent
-
 async def analyze_user_intent(
     user_message: str,
     session_id: str,
@@ -68,35 +39,19 @@ async def analyze_user_intent(
 ) -> dict:
     """
     Use OpenAI to analyze user intent and generate appropriate HTML content.
-    Integrates with MCP to fetch real database data when needed.
+    Integrates with MCP to fetch REAL database data when needed.
     Now maintains conversation context via session memory.
+    IMPORTANT: This function uses ONLY real database data - never generates sample data.
     """
 
     logger.info(f"Analyzing user intent for session {session_id}: {user_message}")
 
-    # Query database if the message suggests data retrieval
-    database_context = None
-    if any(keyword in user_message.lower() for keyword in ["show", "get", "retrieve", "fetch", "list", "display", "find", "query", "search", "active", "data", "database", "user", "table", "reliever"]):
-        logger.info("  📊 Request appears to involve data retrieval - querying database via MCP")
-        try:
-            # Use MCP's agent to query the database for relevant data
-            agent = await make_graph()  # Initialize the agent using MCP
-            result = await agent.ainvoke({
-                "messages": [
-                    {"role": "system", "content": "You are a PostgreSQL expert assistant."},
-                    {"role": "user", "content": user_message}
-                ]
-            })
-            if "messages" in result:
-                database_context = result["messages"][-1].content  # Get the response content from MCP query
-                logger.info(f"  ✅ Database data retrieved via MCP (length: {len(str(database_context))} chars)")
-            else:
-                logger.warning("  ⚠️ Database query failed to return valid results.")
-        except Exception as e:
-            logger.warning(f"  ⚠️ MCP query encountered error: {e}")
-
-    # Build the prompt with database context if available
-    db_context_str = f"\n\n📊 REAL DATABASE DATA AVAILABLE:\n{str(database_context)[:2000]}" if database_context else ""
+    # Get real database context if user message requires data retrieval
+    db_context_str = await get_real_database_context(user_message)
+    if db_context_str:
+        logger.info(f"✅ Real database context retrieved ({len(db_context_str)} chars)")
+    else:
+        logger.info("📌 No database context needed or no data available")
 
     # Get conversation history from memory
     chat_history = get_chat_history(session_id)
@@ -116,10 +71,9 @@ async def analyze_user_intent(
             user_message=user_message,
             format_type=format_reference.get('format_type', 'unknown'),
             format_reference=format_reference.get('html_preview', 'N/A')[:500]
-        ) + memory_context + db_context_str
+        ) + memory_context + (db_context_str if db_context_str else "")
     else:
-        prompt = CONTENT_GENERATION_PROMPT.format(user_message=user_message) + memory_context + db_context_str
-
+        prompt = CONTENT_GENERATION_PROMPT.replace("{user_message}", user_message) + memory_context + (db_context_str if db_context_str else "")
     try:
         # Fetch response from OpenAI using the constructed prompt
         response = openai_client.invoke(prompt)
@@ -130,7 +84,7 @@ async def analyze_user_intent(
 
         result = response.content
         logger.info(f"Successfully received response from OpenAI (length: {len(result)} chars)")
-        logger.info(f"  📊 Data source: {'Database (MCP)' if database_context else 'Generated'}")
+        logger.info(f"  📊 Data source: {'Real Database' if db_context_str else 'No database query'}")
         return result
     except Exception as e:
         logger.error(f"Error calling OpenAI API: {str(e)}", exc_info=True)
